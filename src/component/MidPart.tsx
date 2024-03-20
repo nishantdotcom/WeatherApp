@@ -1,4 +1,9 @@
 import { useEffect, useState } from "react";
+import { SlSpeedometer } from "react-icons/sl";
+import { WiHumidity } from "react-icons/wi";
+import { FaEye } from "react-icons/fa";
+import { SiWindicss } from "react-icons/si";
+
 type LocationType = {
   location: string;
 };
@@ -23,7 +28,7 @@ type WeatherReportType = {
     description: string;
     icon: String;
   };
-  feels_like: number;
+  feels_like?: number;
 };
 
 function MidPart({ location }: LocationType) {
@@ -32,6 +37,9 @@ function MidPart({ location }: LocationType) {
 
   function kelvinToCelsius(kelvin: number): number {
     return Math.round((kelvin - 273.15) * 100) / 100;
+  }
+  function visibilityInKiloMeter(length: number): number {
+    return Math.round(length) / 1000;
   }
 
   useEffect(() => {
@@ -69,7 +77,7 @@ function MidPart({ location }: LocationType) {
             humidity: data.main.humidity,
             temp_max: kelvinToCelsius(data.main.temp_max),
             temp_min: kelvinToCelsius(data.main.temp_min),
-            visibility: data.visibility,
+            visibility: visibilityInKiloMeter(data.visibility),
             pressure: data.main.pressure,
             wind: {
               speed: data.wind.speed,
@@ -112,7 +120,7 @@ function MidPart({ location }: LocationType) {
 
   return (
     <div className="pt-4  md:flex md:justify-around">
-      <div className="border m-2 rounded-2xl p-4 bg-slate-100">
+      <div className="border m-2 rounded-2xl p-4 bg-slate-300">
         <h1 className="capitalize  font-bold text-3xl">{location},IN</h1>
         <div className="pt-1">
           {coordinate && (
@@ -121,19 +129,20 @@ function MidPart({ location }: LocationType) {
             </div>
           )}
         </div>
-        <div className="flex p-2 gap-x-2 ">
-          <div className="font-bold">
-            Feels like {weatherReport.feels_like}&#176;C.
-          </div>
-          <div className="capitalize font-bold">
-            {weatherReport.weather.description}.
-          </div>
-        </div>
+
         <div className="pt-2">
           {weatherReport && (
             <>
               {
                 <div>
+                  <div className="flex p-2 gap-x-2 ">
+                    <div className="font-bold">
+                      Feels like {weatherReport.feels_like}&#176;C.
+                    </div>
+                    <div className="capitalize font-bold">
+                      {weatherReport.weather.description}.
+                    </div>
+                  </div>
                   <div className="flex justify-start">
                     <div className="">
                       <img
@@ -152,7 +161,66 @@ function MidPart({ location }: LocationType) {
           )}
         </div>
       </div>
-      <div className="border m-2 rounded-2xl p-4 bg-slate-100">hii</div>
+      <div className="border m-2 rounded-2xl p-4 bg-slate-300">
+        {weatherReport && (
+          <>
+            <div className="pt-2">
+              <div className="flex justify-start gap-x-4">
+                <div className="w-[50%]">
+                  <div className="flex gap-x-1">
+                    <div>
+                      <SlSpeedometer size={24} />
+                    </div>
+                    <div className="text-xs pt-2">(Pressure)</div>
+                  </div>
+                </div>
+                <div className=" text-lg font-semibold w-[50%]">
+                  {weatherReport.pressure} hPa
+                </div>
+              </div>
+              <div className="flex justify-start gap-x-4 pt-4">
+                <div className="w-[50%]">
+                  <div className="flex gap-x-1">
+                    <div className="pt-1">
+                      <FaEye size={24} />
+                    </div>
+                    <div className="text-xs pt-2">(visibility)</div>
+                  </div>
+                </div>
+                <div className=" text-lg font-semibold w-[50%]">
+                  {weatherReport.visibility} Km
+                </div>
+              </div>
+              <div className="flex justify-start gap-x-4 pt-4">
+                <div className="w-[50%]">
+                  <div className="flex gap-x-1">
+                    <div className="">
+                      <WiHumidity size={28} />
+                    </div>
+                    <div className="text-xs pt-2">(Humidity)</div>
+                  </div>
+                </div>
+                <div className=" text-lg font-semibold w-[50%]">
+                  {weatherReport.humidity} %
+                </div>
+              </div>
+              <div className="flex justify-start gap-x-4 pt-4">
+                <div className="w-[50%]">
+                  <div className="flex gap-x-1">
+                    <div className="">
+                      <SiWindicss size={24} />
+                    </div>
+                    <div className="text-xs pt-2">(WindSpeed)</div>
+                  </div>
+                </div>
+                <div className=" text-lg font-semibold w-[50%]">
+                  {weatherReport.wind.speed} m/sW
+                </div>
+              </div>
+            </div>
+          </>
+        )}
+      </div>
     </div>
   );
 }
